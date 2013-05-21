@@ -31,7 +31,8 @@ Please make sure, that the CKAN process will have access to the logfile specifie
 
 ## License
 
-CKAN Extension for harvesting Stromnetz Berlin
+CKAN Extension for harvesting Stromnetz Berlin.
+
 Copyright (C) 2013 Fraunhofer FOKUS
 
 This program is free software: you can redistribute it and/or modify
