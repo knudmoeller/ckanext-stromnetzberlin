@@ -1,6 +1,6 @@
 # ckanext-stromnetzberlin
 
-A CKAN extension for harvesting Stromnetz Berlin
+A CKAN extension for harvesting Stromnetz Berlin.
 
 ### Dependencies
 
