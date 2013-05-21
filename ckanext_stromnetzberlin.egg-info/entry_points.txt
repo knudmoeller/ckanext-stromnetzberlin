@@ -1,0 +1,4 @@
+
+        [ckan.plugins]
+	stromnetz_harvester=ckanext.stromnetzberlin.ckanharvester:StromnetzBerlinCKANHarvester
+	
