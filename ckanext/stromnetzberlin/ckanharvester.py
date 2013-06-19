@@ -54,6 +54,13 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
 
     def amend_package(self, package):
         package['groups'] = ['verentsorgung']
+        
+        # turn the date arrays into individual extras entries
+        for date in package["extras"]["dates"]:
+            if date["role"] is "veroeffentlicht":
+                package["extras"]["date_released"] = date["date"]
+            if date["role"] is "aktualisiert":
+                package["extras"]["date_updated"] = date["date"]
 
     def import_stage(self, harvest_object):
         package_dict = json.loads(harvest_object.content)
