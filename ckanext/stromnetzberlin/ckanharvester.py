@@ -57,7 +57,11 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         package['groups'] = ['verentsorgung']
         
         # turn the date arrays into individual extras entries
-        dates = package['extras']['dates']
+        # something weird here: the value I get back from package['extras']['dates'] is sometimes a list (good),
+        # sometimes a string (bad). So I use a hackish combination of eval and str that should work on both
+        # cases and always give me back a list
+        # dates = package['extras']['dates']
+        dates = eval(str(package['extras']['dates']))
         log.debug("dates: '{datestring}'".format(datestring=str(dates)))
         for date in dates:
             log.debug("date: '{datestring}' is a '{type}".format(datestring=str(date), type=str(type(date))))
