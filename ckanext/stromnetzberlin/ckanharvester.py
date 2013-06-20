@@ -53,6 +53,7 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
                 'compatibility problems.'}
 
     def amend_package(self, package):
+        log.warning("Ammending package '{name}'".format(name=package["name"]))
         package['groups'] = ['verentsorgung']
         
         # turn the date arrays into individual extras entries
