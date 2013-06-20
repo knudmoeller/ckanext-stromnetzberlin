@@ -60,6 +60,7 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         dates = package['extras']['dates']
         log.debug("dates: '{datestring}'".format(datestring=str(dates)))
         for date in dates:
+            log.debug("date: '{datestring}' is a '{type}".format(datestring=str(date), type=str(type(date))))
             if date["role"] == "veroeffentlicht":
                 package["extras"]["date_released"] = date["date"]
             if date["role"] == "aktualisiert":
