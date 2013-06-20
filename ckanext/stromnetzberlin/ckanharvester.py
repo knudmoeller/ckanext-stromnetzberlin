@@ -57,6 +57,8 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         package['groups'] = ['verentsorgung']
         
         # turn the date arrays into individual extras entries
+        dates = package['extras']['dates']
+        log.debug("dates: '{datestring}'".format(datestring=str(dates)))
         for date in package["extras"]["dates"]:
             if date["role"] is "veroeffentlicht":
                 package["extras"]["date_released"] = date["date"]
