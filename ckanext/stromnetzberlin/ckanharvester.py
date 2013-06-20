@@ -60,9 +60,9 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         dates = package['extras']['dates']
         log.debug("dates: '{datestring}'".format(datestring=str(dates)))
         for date in package["extras"]["dates"]:
-            if date["role"] is "veroeffentlicht":
+            if date["role"] == "veroeffentlicht":
                 package["extras"]["date_released"] = date["date"]
-            if date["role"] is "aktualisiert":
+            if date["role"] == "aktualisiert":
                 package["extras"]["date_updated"] = date["date"]
 
     def import_stage(self, harvest_object):
