@@ -61,14 +61,21 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         # sometimes a string (bad). So I use a hackish combination of eval and str that should work on both
         # cases and always give me back a list
         # dates = package['extras']['dates']
-        dates = eval(str(package['extras']['dates']))
-        log.debug("dates: '{datestring}'".format(datestring=str(dates)))
-        for date in dates:
-            log.debug("date: '{datestring}' is a '{type}".format(datestring=str(date), type=str(type(date))))
-            if date["role"] == "veroeffentlicht":
-                package["extras"]["date_released"] = date["date"]
-            if date["role"] == "aktualisiert":
-                package["extras"]["date_updated"] = date["date"]
+        if 'dates' in package['extras']:
+            dates = eval(str(package['extras']['dates']))
+            log.debug("dates: '{datestring}'".format(datestring=str(dates)))
+            released = filter(lambda x: x['role'] == 'veroeffentlicht', dates)
+            updated = filter(lambda x: x['role'] == 'aktualisiert', dates)
+            if len(released) > 0:
+                package["extras"]["date_released"] = released[0]["date"]
+            if len(updated) > 0:
+                package["extras"]["date_updated"] = updated[0]["date"]
+                
+        if 'contacts' in package['extras']:
+            contacts = eval(str(package['extras']['contacts']))
+            maintainer = filter(lambda x: x['role'] == 'ansprechpartner', contacts)
+            if len(maintainer) > 0:
+                package['maintainer'] = maintainer[0]['name']
 
     def import_stage(self, harvest_object):
         package_dict = json.loads(harvest_object.content)
