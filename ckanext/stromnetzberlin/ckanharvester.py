@@ -76,6 +76,11 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             maintainer = filter(lambda x: x['role'] == 'ansprechpartner', contacts)
             if len(maintainer) > 0:
                 package['maintainer'] = maintainer[0]['name']
+                package['maintainer_email'] = maintainer[0]['email']
+
+        # fall back solution if no email given for Ansprechpartner
+        if not package['maintainer_email']:
+            package['maintainer_email'] = 'info@stromnetz-berlin.de'
 
     def import_stage(self, harvest_object):
         package_dict = json.loads(harvest_object.content)
