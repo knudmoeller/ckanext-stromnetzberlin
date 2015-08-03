@@ -25,6 +25,6 @@ setup(
 	entry_points=\
 	"""
         [ckan.plugins]
-	stromnetz_harvester=ckanext.stromnetzberlin.ckanharvester:StromnetzBerlinCKANHarvester
+	stromnetzberlin=ckanext.stromnetzberlin.ckanharvester:StromnetzBerlinCKANHarvester
 	""",
 )
