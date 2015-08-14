@@ -4,6 +4,8 @@
 from ckan.lib.helpers import json
 from ckanext.harvest.harvesters.ckanharvester import CKANHarvester
 
+from dateutil.parser import parse
+
 import ConfigParser
 import logging
 import os
@@ -67,20 +69,30 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             released = filter(lambda x: x['role'] == 'veroeffentlicht', dates)
             updated = filter(lambda x: x['role'] == 'aktualisiert', dates)
             if len(released) > 0:
-                package["extras"]["date_released"] = released[0]["date"]
+                package["extras"]["date_released"] = parse(released[0]["date"]).isoformat('T')
             if len(updated) > 0:
-                package["extras"]["date_updated"] = updated[0]["date"]
+                package["extras"]["date_updated"] = parse(updated[0]["date"]).isoformat('T')
                 
+        if 'temporal_coverage_from' in package['extras']:
+            log.debug("adjusting temporal_coverage_from")
+            package['extras']['temporal_coverage_from'] = parse(package['extras']['temporal_coverage_from']).isoformat('T')
+
+        if 'temporal_coverage_to' in package['extras']:
+            log.debug("adjusting temporal_coverage_to")
+            package['extras']['temporal_coverage_to'] = parse(package['extras']['temporal_coverage_to']).isoformat('T')
+
         if 'contacts' in package['extras']:
             contacts = eval(str(package['extras']['contacts']))
             maintainer = filter(lambda x: x['role'] == 'ansprechpartner', contacts)
             if len(maintainer) > 0:
                 package['maintainer'] = maintainer[0]['name']
-                package['maintainer_email'] = maintainer[0]['email']
+                if 'email' in maintainer[0]:
+                    package['maintainer_email'] = maintainer[0]['email']
 
         # fall back solution if no email given for Ansprechpartner
         if not package['maintainer_email']:
             package['maintainer_email'] = 'info@stromnetz-berlin.de'
+
 
     def import_stage(self, harvest_object):
         package_dict = json.loads(harvest_object.content)
