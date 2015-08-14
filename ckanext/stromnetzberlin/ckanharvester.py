@@ -93,6 +93,15 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         if not package['maintainer_email']:
             package['maintainer_email'] = 'info@stromnetz-berlin.de'
 
+        # "datensatz" and "dokument" are deprecated for newer versions of CKAN,
+        # but keep information in extras
+        if package['type'] == "datensatz":
+            package['extras']['berlin.type'] = "datensatz"
+        if package['type'] == "dokument":
+            package['extras']['berlin.type'] = "dokument"
+
+        package['type'] = "dataset"
+
 
     def import_stage(self, harvest_object):
         package_dict = json.loads(harvest_object.content)
