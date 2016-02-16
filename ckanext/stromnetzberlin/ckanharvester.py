@@ -30,21 +30,18 @@ log.addHandler(fh)
 
 
 class GroupCKANHarvester(CKANHarvester):
-    """An extended CKAN harvester that also imports remote groups, for that api version 1 is enforced"""
-
-    api_version = 1
-    """Enforce API version 1 for enabling group import"""
+    """An extended CKAN harvester that imports from Stromnetz Berlin GmbHs
+        CKAN and adjusts the metadata."""
 
     def _set_config(self, config_str):
-        """Enforce API version 1 for enabling group import"""
         if config_str:
             self.config = json.loads(config_str)
         else:
             self.config = {}
-        self.api_version = 1
-        self.config['api_version'] = '1'
-        self.config['remote_groups'] = 'only_local'
-        self.config['force_all'] = True
+        # self.api_version = 1
+        # self.config['api_version'] = '1'
+        # self.config['remote_groups'] = 'only_local'
+        # self.config['force_all'] = True
 
 
 class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
@@ -96,11 +93,14 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         # "datensatz" and "dokument" are deprecated for newer versions of CKAN,
         # but keep information in extras
         if package['type'] == "datensatz":
-            package['extras']['berlin.type'] = "datensatz"
+            package['extras']['berlin_type'] = "datensatz"
         if package['type'] == "dokument":
-            package['extras']['berlin.type'] = "dokument"
+            package['extras']['berlin_type'] = "dokument"
 
         package['type'] = "dataset"
+
+        # add source information
+        package['extras']['berlin_source'] = "harvest-stromnetzberlin"
 
 
     def import_stage(self, harvest_object):
