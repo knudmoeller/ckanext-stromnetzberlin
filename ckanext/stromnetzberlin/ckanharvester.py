@@ -84,6 +84,11 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             if len(updated) > 0:
                 package["extras"]["date_updated"] = parse(updated[0]["date"]).isoformat('T')
                 
+        # fix capitalization of temporal_granularity
+        if 'temporal_granularity' in package['extras']:
+            log.debug('adjusting temporal_granularity')
+            package['extras']['temporal_granularity'] = package['extras']['temporal_granularity'].title()
+
         if 'temporal_coverage_from' in package['extras']:
             log.debug("adjusting temporal_coverage_from")
             package['extras']['temporal_coverage_from'] = parse(package['extras']['temporal_coverage_from']).isoformat('T')
@@ -111,7 +116,6 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         geographical_coverage_new = self.geo_coverage_mapping[geographical_coverage_old]
         log.debug("replacing '{}' with '{}'".format(geographical_coverage_old, geographical_coverage_new))
         package['extras']['geographical_coverage'] = geographical_coverage_new
-
 
 
         if 'contacts' in package['extras']:
