@@ -29,6 +29,8 @@ log.setLevel(logging.DEBUG)
 log.addHandler(fh)
 
 
+
+
 class GroupCKANHarvester(CKANHarvester):
     """An extended CKAN harvester that imports from Stromnetz Berlin GmbHs
         CKAN and adjusts the metadata."""
@@ -38,13 +40,26 @@ class GroupCKANHarvester(CKANHarvester):
             self.config = json.loads(config_str)
         else:
             self.config = {}
-        # self.api_version = 1
-        # self.config['api_version'] = '1'
-        # self.config['remote_groups'] = 'only_local'
-        # self.config['force_all'] = True
+        self.api_version = 1
+        self.config['api_version'] = '1'
+        self.config['default_groups'] = ['verentsorgung']
+        self.config['default_extras'] = { 'berlin_source': 'harvest-stromnetzberlin'}
 
 
 class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
+
+    geo_granularity_mapping = {
+        'GERMANFEDERATION': 'Deutschland' ,
+        'STATE': 'Berlin' ,
+        'CITY': 'Berlin' ,
+        None: 'Berlin' ,
+    }
+
+    geo_coverage_mapping = {
+        'Berlin': 'Berlin' ,
+        None: 'Berlin' ,
+    }
+
     def info(self):
         return {'name':        'stromnetz',
                 'title':       'StromnetzBerlin Harvester',
@@ -53,7 +68,6 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
 
     def amend_package(self, package):
         log.debug("Amending package '{name}'".format(name=package["name"]))
-        package['groups'] = ['verentsorgung']
         
         # turn the date arrays into individual extras entries
         # something weird here: the value I get back from package['extras']['dates'] is sometimes a list (good),
@@ -78,6 +92,28 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             log.debug("adjusting temporal_coverage_to")
             package['extras']['temporal_coverage_to'] = parse(package['extras']['temporal_coverage_to']).isoformat('T')
 
+
+        geographical_granularity_old = None
+        if 'geographical_granularity' in package['extras']:
+            log.debug('adjusting geographical_granularity')
+            geographical_granularity_old = package['extras']['geographical_granularity']
+
+        geographical_granularity_new = self.geo_granularity_mapping[geographical_granularity_old]
+        log.debug("replacing '{}' with '{}'".format(geographical_granularity_old, geographical_granularity_new))
+        package['extras']['geographical_granularity'] = geographical_granularity_new
+
+
+        geographical_coverage_old = None
+        if 'geographical_coverage' in package['extras']:
+            log.debug('adjusting geographical_coverage')
+            geographical_coverage_old = package['extras']['geographical_coverage']
+
+        geographical_coverage_new = self.geo_coverage_mapping[geographical_coverage_old]
+        log.debug("replacing '{}' with '{}'".format(geographical_coverage_old, geographical_coverage_new))
+        package['extras']['geographical_coverage'] = geographical_coverage_new
+
+
+
         if 'contacts' in package['extras']:
             contacts = eval(str(package['extras']['contacts']))
             maintainer = filter(lambda x: x['role'] == 'ansprechpartner', contacts)
@@ -98,9 +134,6 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             package['extras']['berlin_type'] = "dokument"
 
         package['type'] = "dataset"
-
-        # add source information
-        package['extras']['berlin_source'] = "harvest-stromnetzberlin"
 
 
     def import_stage(self, harvest_object):
