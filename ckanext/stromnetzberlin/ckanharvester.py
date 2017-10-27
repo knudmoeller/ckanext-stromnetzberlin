@@ -59,7 +59,8 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         def unpack_extras(packed):
             unpacked = {}
             for extra in packed:
-                unpacked[extra['key']] = unquote_value(extra['value'])
+                value = unquote_value(extra['value'])
+                unpacked[extra['key']] = value
             return unpacked
 
         def pack_extras(unpacked):
@@ -126,7 +127,7 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             contacts = eval(str(extras['contacts']))
             maintainer = filter(lambda x: x['role'] == 'ansprechpartner', contacts)
             if len(maintainer) > 0:
-                package['maintainer'] = maintainer[0]['name']
+                package['maintainer'] = maintainer[0]['name'].decode('unicode-escape')
                 if 'email' in maintainer[0]:
                     package['maintainer_email'] = maintainer[0]['email']
 
