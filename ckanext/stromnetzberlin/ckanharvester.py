@@ -9,7 +9,7 @@ from dateutil.parser import parse
 import ConfigParser
 import logging
 import os
-import re
+import json
 
 
 log = logging.getLogger(__name__)
@@ -25,8 +25,13 @@ class GroupCKANHarvester(CKANHarvester):
             self.config = {}
         self.api_version = 1
         self.config['api_version'] = '1'
-        # self.config['default_groups'] = [ "verentsorgung" ]
         self.config['default_extras'] = { 'berlin_source': 'harvest-stromnetzberlin'}
+        self.config['default_groups'] = ["verentsorgung"]
+        # we need to run validate_config to match the named default group above with
+        # the actual group with this name
+        config_str = json.dumps(self.config)
+        config_str = self.validate_config(config_str)
+        self.config = json.loads(config_str)
 
 
 class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
