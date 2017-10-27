@@ -152,4 +152,5 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             return
 
         harvest_object.content = json.dumps(package_dict)
-        super(StromnetzBerlinCKANHarvester, self).import_stage(harvest_object)
+        harvest_object.current = True
+        return super(StromnetzBerlinCKANHarvester, self).import_stage(harvest_object)
