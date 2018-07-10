@@ -48,6 +48,8 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         None: 'Berlin' ,
     }
 
+    data_formats = [ u'csv' , u'xls' , u'xlsx' , u'xml' ]
+
     def info(self):
         return {'name':        'stromnetz',
                 'title':       'StromnetzBerlin Harvester',
@@ -73,6 +75,11 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             return value.strip("\"")
 
         log.debug("Amending package '{name}'".format(name=package["name"]))
+
+        if len(package['resources']) < 1:
+            log.debug("There are no resources, don't import this.")
+            return "unchanged"
+
         packed = package['extras']
         extras = unpack_extras(packed)
 
@@ -135,27 +142,31 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         if not package['maintainer_email']:
             package['maintainer_email'] = 'info@stromnetz-berlin.de'
 
-        # "datensatz" and "dokument" are deprecated for newer versions of CKAN,
-        # but keep information in extras
-        if package['type'] == "datensatz":
-            extras['berlin_type'] = "datensatz"
-        if package['type'] == "dokument":
-            extras['berlin_type'] = "dokument"
+        resource_formats = list(map(lambda x: x['format'], package['resources']))
+        extras['berlin_type'] = 'datensatz'
+        if len(resource_formats) > 0 and len(set(self.data_formats) & set(resource_formats)) == 0:
+            log.debug("There are data resources, so this is a document.")
 
         package['type'] = "dataset"
 
         package['extras'] = pack_extras(extras)
 
         log.debug("Done amending package '{name}'".format(name=package["name"]))
+        
+        return True
 
     def import_stage(self, harvest_object):
         package_dict = json.loads(harvest_object.content)
+        success = True
         try:
-            self.amend_package(package_dict)
+            success = self.amend_package(package_dict)
         except ValueError, e:
             self._save_object_error(str(e), harvest_object)
             log.error('Stromnetz: ' + str(e))
-            return
+            return False
+
+        if (success == "unchanged"):
+            return success
 
         harvest_object.content = json.dumps(package_dict)
         harvest_object.current = True
