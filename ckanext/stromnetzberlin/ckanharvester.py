@@ -40,12 +40,12 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         u'GERMANFEDERATION': 'Deutschland' ,
         u'STATE': 'Berlin' ,
         u'CITY': 'Berlin' ,
-        None: 'Berlin' ,
+        None: 'Keine' ,
     }
 
     geo_coverage_mapping = {
         u'Berlin': 'Berlin' ,
-        None: 'Berlin' ,
+        None: 'Keine' ,
     }
 
     data_formats = [ u'csv' , u'xls' , u'xlsx' , u'xml' ]
