@@ -46,7 +46,7 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
 
     geo_coverage_mapping = {
         u'Berlin': 'Berlin' ,
-        None: 'Keine' ,
+        None: 'Berlin' ,
     }
 
     data_formats = [ u'csv' , u'xls' , u'xlsx' , u'xml' ]
