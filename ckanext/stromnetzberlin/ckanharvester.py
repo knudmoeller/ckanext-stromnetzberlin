@@ -112,22 +112,15 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
             log.debug("adjusting temporal_coverage_to")
             extras['temporal_coverage_to'] = parse(extras['temporal_coverage_to']).isoformat('T')
 
-        geographical_granularity_old = None
-        if 'geographical_granularity' in extras:
-            log.debug('adjusting geographical_granularity')
-            geographical_granularity_old = extras['geographical_granularity']
-
-        geographical_granularity_new = self.geo_granularity_mapping[geographical_granularity_old]
+        log.debug('adjusting geographical_granularity')
+        geographical_granularity_old = extras.get('geographical_granularity', None)
+        geographical_granularity_new = self.geo_granularity_mapping.get(geographical_granularity_old, u'Keine')
         log.debug("replacing '{}' with '{}'".format(geographical_granularity_old, geographical_granularity_new))
         extras['geographical_granularity'] = geographical_granularity_new
 
-
-        geographical_coverage_old = None
-        if 'geographical_coverage' in extras:
-            log.debug('adjusting geographical_coverage')
-            geographical_coverage_old = extras['geographical_coverage']
-
-        geographical_coverage_new = self.geo_coverage_mapping[geographical_coverage_old]
+        log.debug('adjusting geographical_coverage')
+        geographical_coverage_old = extras.get('geographical_coverage', None)
+        geographical_coverage_new = self.geo_coverage_mapping.get(geographical_coverage_old, u'Keine')
         log.debug("replacing '{}' with '{}'".format(geographical_coverage_old, geographical_coverage_new))
         extras['geographical_coverage'] = geographical_coverage_new
 
