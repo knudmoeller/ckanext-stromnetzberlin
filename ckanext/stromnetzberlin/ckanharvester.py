@@ -40,6 +40,7 @@ class StromnetzBerlinCKANHarvester(GroupCKANHarvester):
         u'GERMANFEDERATION': 'Deutschland' ,
         u'STATE': 'Berlin' ,
         u'CITY': 'Berlin' ,
+        u'MUNICIPALITY': 'Bezirk' ,
         None: 'Keine' ,
     }
 
